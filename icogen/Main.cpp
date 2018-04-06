@@ -67,8 +67,9 @@ IWICBitmapSource * __getBitmap ( IWICImagingFactory * factory, char * filename )
 	CComPtr<IWICFormatConverter> formatConverter;
 	if ( FAILED ( factory->CreateFormatConverter ( &formatConverter ) ) )
 		return nullptr;
-	if ( FAILED ( formatConverter->Initialize ( decodeFrame, GUID_WICPixelFormat32bppBGRA,
-		WICBitmapDitherTypeNone, nullptr, 0, WICBitmapPaletteTypeCustom ) ) )
+	HRESULT hr;
+	if ( FAILED ( hr = formatConverter->Initialize ( decodeFrame, GUID_WICPixelFormat8bppIndexed,
+		WICBitmapDitherTypeNone, nullptr, 0, WICBitmapPaletteTypeMedianCut ) ) )
 		return nullptr;
 
 	return formatConverter.Detach ();
@@ -86,8 +87,8 @@ IWICBitmapSource * __getBitmap ( IWICImagingFactory * factory, IWICBitmapSource 
 	CComPtr<IWICFormatConverter> formatConverter;
 	if ( FAILED ( factory->CreateFormatConverter ( &formatConverter ) ) )
 		return nullptr;
-	if ( FAILED ( formatConverter->Initialize ( bitmapScaler, GUID_WICPixelFormat32bppBGRA,
-		WICBitmapDitherTypeOrdered4x4, nullptr, 0, WICBitmapPaletteTypeCustom ) ) )
+	if ( FAILED ( formatConverter->Initialize ( bitmapScaler, GUID_WICPixelFormat8bppIndexed,
+		WICBitmapDitherTypeNone, nullptr, 0, WICBitmapPaletteTypeMedianCut ) ) )
 		return nullptr;
 
 	return formatConverter.Detach ();
