@@ -202,22 +202,22 @@ bool __saveBitmap ( IWICImagingFactory * factory, const std::vector<CComPtr<IWIC
 	if ( !__convertResizedContainsVector ( factory, resizedSources, tupleVector ) )
 		return false;
 
-	int totalWritten = tupleVector.size () * sizeof ( ENTRYHEADER ) + sizeof ( ICOHEADER );
+	size_t totalWritten = tupleVector.size () * sizeof ( ENTRYHEADER ) + sizeof ( ICOHEADER );
 	for ( auto i = tupleVector.begin (); i != tupleVector.end (); ++i )
 	{
 		auto & entry = std::get<0> ( *i );
-		entry.fileOffset = totalWritten;
+		entry.fileOffset = ( DWORD ) totalWritten;
 		outputStream->Write ( &entry, sizeof ( ENTRYHEADER ), nullptr );
 		STATSTG statstg;
 		std::get<1> ( *i )->Stat ( &statstg, 0 );
-		totalWritten += statstg.cbSize.QuadPart;
+		totalWritten += ( size_t ) statstg.cbSize.QuadPart;
 	}
 
 	for ( auto i = tupleVector.begin (); i != tupleVector.end (); ++i )
 	{
 		STATSTG statstg;
 		std::get<1> ( *i )->Stat ( &statstg, 0 );
-		int length = statstg.cbSize.QuadPart;
+		int length = ( int ) statstg.cbSize.QuadPart;
 		int totalRead = 0;
 		BYTE buffer [ 4096 ];
 		while ( totalRead < length )
